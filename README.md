@@ -66,6 +66,54 @@ This library is intended to be used by a higher-level library that handles parsi
 
 As other drivers are finished out, they'll be passed in to the constructor. Currently the default driver is `httpclient.luasocket_driver`
 
+## openresty/nginx example
+- Install to the appropriate path for luajit
+- Add an `internal` location to the appropriate place for handling the location capture:
+
+```
+        location /capture {
+                internal;
+                resolver 8.8.8.8;
+                set_unescape_uri $clean_url $arg_url;
+                proxy_pass $clean__url;
+        }
+
+```
+
+The above stanza sets up an internal capture location called `/capture`. When a request is sent to it via `ngx.location.capture`, takes whatever url is sent to that location and strips off the `url` argument from it and then does a standard proxy pass.
+
+You can use either `content_by_lua` or `content_by_lua_file` with something like so in it:
+
+```lua
+local hc = require("httpclient").new('httpclient.ngx_driver')
+
+local d,_ = hc:get("https://httpbin.org/get")
+
+ngx.header.content_type = d.headers['content-type'];
+ngx.say(d.body)
+```
+
+Note the default options for the `ngx_driver` are to use a capture location of `/capture` and for the real url to be passed with an arg name of `url`. This can be overridden like so:
+
+```lua
+local hc = require("httpclient").new('httpclient.ngx_driver')
+hc:set_default('capture_url', '/somewhere_else')
+hc:set_default('capture_variable', 'someother_variable')
+```
+
+Those changes would result in your above stanza requiring the following:
+
+```
+        location /somewhere_else {
+                internal;
+                resolver 8.8.8.8;
+                set_unescape_uri $clean_url $arg_someother_variable;
+                proxy_pass $clean__url;
+        }
+```
+
+Note that previous versions of this readme required setting some params in the internal redirect to clear headers. This is no longer needed as the ngx driver will now clear ALL headers before requesting.
+
 ## Other bits
 There are ways to override much of what you pass in to the actual http request specific to the driver.
 
