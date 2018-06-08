@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "httpclient"
-version = "0.1.0-7"
+version = "0.1.0-8"
 -- LuaDist source
 source = {
-  tag = "0.1.0-7",
+  tag = "0.1.0-8",
   url = "git://github.com/LuaDist-testing/httpclient.git"
 }
 -- Original source
 -- source = {
 --   url = "git://github.com/lusis/lua-httpclient",
---   tag = "0.1.0-7"
+--   tag = "0.1.0-8"
 -- }
 description = {
   summary = "Unified http client wrapper",
@@ -21,7 +21,7 @@ description = {
     license = "Apache"
 }
 dependencies = {
-  "luasocket ~> 3.0rc1-1",
+  "luasocket ~> 3.0rc1-2",
   "inspect ~> 3.0-1"
 }
 build = {
